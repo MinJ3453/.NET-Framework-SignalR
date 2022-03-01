@@ -1,0 +1,42 @@
+<div style=" padding-top: 30px; padding-bottom: 30px; padding-left: 30px;">
+        <div class="input-group" style="width: 70%; float: left; margin-bottom: 0px;">
+            <span class="input-group-addon">@ViewBag.Nname</span>
+            <input type="text"  id="message" class="form-control" aria-describedby="inputGroupSuccess1Status">
+        </div>
+        <button type="button"  id="sendmessage" class="btn btn-default">Send</button>
+
+        @*<div class="container" style="width: 70%;">
+                <input type="text" id="message" />
+                <input type="button" id="sendmessage" value="Send" />
+                <input type="hidden" id="displayname" />
+            </div>*@
+        <div id="discussion">
+        </div>
+    </div>
+    <script src="~/Scripts/jquery.signalR-2.4.3.min.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.4.3.js"></script>
+    <script src="/SARPAdmin/signalr/hubs"></script>
+    <script type="text/javascript">
+        $(function () {
+            var chat = $.connection.Chat;
+            chat.client.broadcastMessage = function (name, message) {
+                var encodedName = $('<div />').text(name).html();
+                var encodedMsg = $('<div />').text(message).html();
+                $('#discussion').append('<div><strong>' + encodedName
+                    + '</strong>:&nbsp;&nbsp;' + encodedMsg + '</div>');
+
+            };
+           @* $('#displayname').val(prompt('Enter your name:', ''));*@
+            $('#message').focus();
+
+            $.connection.hub.start().done(function () {
+                $('#sendmessage').click(function () {
+                    var name='@ViewBag.Nname' //현제 닉네임 가져옴
+                    chat.server.send(name, $('#message').val());
+
+                    $('#message').val('').focus();
+                });
+            });
+        });
+      
+          </script>
